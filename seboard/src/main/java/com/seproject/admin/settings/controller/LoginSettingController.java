@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "로그인 옵션 관리 API", description = "로그인 옵션 관리 API")
 @RequiredArgsConstructor
-@RestController("/admin/loginSettings")
+@RequestMapping(value = "/admin/loginSettings")
+@RestController
 public class LoginSettingController {
 
     private final LoginSettingAppService loginSettingAppService;
