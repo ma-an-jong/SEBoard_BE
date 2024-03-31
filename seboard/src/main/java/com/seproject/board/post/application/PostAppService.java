@@ -142,6 +142,11 @@ public class PostAppService {
             throw new CustomAccessDeniedException(ErrorCode.ACCESS_DENIED, null);
         }
 
+        if(!command.getCategoryId().equals(post.getCategory().getMenuId())){
+            Category category = categoryService.findById(command.getCategoryId());
+            post.changeCategory(category);
+        }
+
         checkSpamWord(command.getTitle(), command.getContents());
 
         post.changeTitle(command.getTitle());
@@ -163,9 +168,6 @@ public class PostAppService {
 
         validFileListSize(new ArrayList<>(post.getAttachments()));
 
-        //TODO : 카테고리 변경은 불가능
-//        Category category = categoryService.findById(command.getCategoryId());
-//        post.changeCategory(category);
 
         return post.getPostId();
     }

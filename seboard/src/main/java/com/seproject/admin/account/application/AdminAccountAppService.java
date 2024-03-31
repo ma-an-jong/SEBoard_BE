@@ -145,14 +145,18 @@ public class AdminAccountAppService {
     public void updateAccount(Long accountId,UpdateAccountRequest request) {
         checkAuthorization(DashBoardMenu.ACCOUNT_MANAGE_URL);
 
+        Account account = accountService.findById(accountId);
+
         String loginId = request.getId();
 
-        if (accountService.isExistLoginId(loginId)) {
-            throw new CustomIllegalArgumentException(ErrorCode.USER_ALREADY_EXIST,null);
-        }
+        if(!account.getLoginId().equals(loginId)){
+            if ( accountService.isExistLoginId(loginId)) {
+                throw new CustomIllegalArgumentException(ErrorCode.USER_ALREADY_EXIST,null);
+            }
 
-        if(!bannedIdService.possibleId(loginId)) {
-            throw new CustomIllegalArgumentException(ErrorCode.BANNED_ID,null);
+            if(!bannedIdService.possibleId(loginId)) {
+                throw new CustomIllegalArgumentException(ErrorCode.BANNED_ID,null);
+            }
         }
 
         String nickname = request.getNickname();
