@@ -38,10 +38,12 @@ public abstract class Account implements UserDetails {
 
     public void update(String loginId,String password,String name,List<RoleAccount> roleAccounts) {
         this.loginId = loginId;
-        this.password = password;
         this.name = name;
         this.roleAccounts.clear();
         this.roleAccounts.addAll(roleAccounts);
+        if(password!=null){
+            this.password = password;
+        }
     }
 
     public void addRoleAccount(RoleAccount roleAccount) {

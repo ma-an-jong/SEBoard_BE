@@ -139,7 +139,10 @@ public class AccountService implements UserDetailsService {
                 .map((role) -> new RoleAccount(account,role))
                 .collect(Collectors.toList());
 
-        String encodedPassword = passwordEncoder.encode(password);
+        String encodedPassword = null;
+        if(password!=null){
+            encodedPassword = passwordEncoder.encode(password);
+        }
 
         account.update(
                 loginId,
