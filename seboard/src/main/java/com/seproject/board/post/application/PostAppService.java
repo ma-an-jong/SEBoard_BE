@@ -7,6 +7,8 @@ import com.seproject.account.utils.SecurityUtils;
 import com.seproject.admin.banned.domain.SpamWord;
 import com.seproject.admin.banned.domain.repository.SpamWordRepository;
 import com.seproject.admin.post.application.PostSyncService;
+import com.seproject.board.comment.domain.model.Comment;
+import com.seproject.board.comment.domain.repository.CommentRepository;
 import com.seproject.board.common.BaseTime;
 import com.seproject.board.menu.domain.Category;
 import com.seproject.board.menu.service.CategoryService;
@@ -52,6 +54,7 @@ public class PostAppService {
     private final AnonymousService anonymousService;
     private final PostService postService;
     private final CategoryService categoryService;
+    private final CommentRepository commentRepository;
 
     private final PostSyncService postSyncAppService;
 
@@ -192,6 +195,10 @@ public class PostAppService {
 
         if (post.isWrittenBy(account.getAccountId()) || post.getCategory().manageable(account.getRoles())) {
             post.delete(true);
+
+            List<Comment> comments = commentRepository.findByPostId(postId);
+
+            comments.forEach(comment -> comment.delete(true));
             return;
         }
 

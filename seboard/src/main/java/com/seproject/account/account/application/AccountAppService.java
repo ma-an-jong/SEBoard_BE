@@ -123,6 +123,8 @@ public class AccountAppService {
 
         Account account = SecurityUtils.getAccount()
                 .orElseThrow(() -> new CustomAuthenticationException(ErrorCode.NOT_LOGIN, null));
+
+        account = accountService.findById(account.getAccountId());
         List<Role> authorities = account.getRoles();
 
         boolean flag = false;

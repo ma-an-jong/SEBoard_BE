@@ -18,10 +18,19 @@ public class BaseTime {
     private LocalDateTime modifiedAt;
 
     public static BaseTime now(){
-        return new BaseTime(LocalDateTime.now(), LocalDateTime.now());
+        LocalDateTime now = LocalDateTime.now();
+        return new BaseTime(now, now);
     }
 
     public static BaseTime of(LocalDateTime createdAt, LocalDateTime modifiedAt) {
         return new BaseTime(createdAt, modifiedAt);
+    }
+
+    public void modify(){
+        this.modifiedAt = LocalDateTime.now();
+    }
+
+    public boolean idModified() {
+        return !createdAt.equals(modifiedAt);
     }
 }

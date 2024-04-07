@@ -88,10 +88,12 @@ public class Post {
 
     public void changeTitle(String title) {
         this.title = title;
+        baseTime.modify();
     }
 
     public void changeContents(String contents) {
         this.contents = contents;
+        baseTime.modify();
     }
 
     public void changeExposeOption(ExposeState exposeState, String password) {
@@ -104,21 +106,26 @@ public class Post {
             exposeOption = ExposeOption.of(exposeState, password);
         }
 
+        baseTime.modify();
     }
 
     public void changeCategory(Category category) {
         this.category = category;
+        baseTime.modify();
     }
 
     public void changePin(boolean pinState) {
         this.pined = pinState;
+        baseTime.modify();
     }
 
     public void addAttachment(FileMetaData attachment) {
         attachments.add(attachment);
+        baseTime.modify();
     }
     public void removeAttachment(FileMetaData attachment){
         attachments.remove(attachment);
+        baseTime.modify();
     }
 
     public Set<FileMetaData> getAttachments() {
@@ -130,6 +137,7 @@ public class Post {
     }
 
     public void delete(boolean isPermanent) {
+        baseTime.modify();
         if(isPermanent) {
             this.status = Status.PERMANENT_DELETED;
         }else{
@@ -156,6 +164,7 @@ public class Post {
     }
 
     public void restore() {
+        baseTime.modify();
         if(status!=Status.NORMAL){
             status = Status.NORMAL;
             reportCount = 0;

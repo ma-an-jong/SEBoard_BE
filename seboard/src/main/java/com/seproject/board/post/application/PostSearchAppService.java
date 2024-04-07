@@ -3,6 +3,7 @@ package com.seproject.board.post.application;
 import com.seproject.account.account.domain.Account;
 import com.seproject.account.role.domain.Role;
 import com.seproject.account.utils.SecurityUtils;
+import com.seproject.board.comment.domain.model.Comment;
 import com.seproject.board.menu.domain.Category;
 import com.seproject.board.post.controller.PostSearchOptions;
 import com.seproject.board.post.controller.dto.PostSearchRequest;
@@ -27,7 +28,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -193,8 +196,18 @@ public class PostSearchAppService {
     //TODO : 쿼리문으로 처리?
     private void setCommentSize(Page<RetrievePostListResponseElement> postPage){
         postPage.forEach(postDto -> { // TODO : N+1
-            int commentSize = commentRepository.countCommentsByPostId(postDto.getPostId());
-            postDto.setCommentSize(commentSize);
+            List<Comment> comments = commentRepository.findByPostId(postDto.getPostId());
+            LocalDateTime resModifiedAt = postDto.getModifiedAt();
+
+            Optional<Comment> recentComment = comments.stream()
+                    .filter(comment -> comment.getBaseTime().getModifiedAt().isAfter(resModifiedAt))
+                    .max(Comparator.comparing(c -> c.getBaseTime().getModifiedAt()));
+
+            if(recentComment.isPresent() && postDto.getModifiedAt().isBefore(recentComment.get().getBaseTime().getModifiedAt())){
+                postDto.setModifiedAt(recentComment.get().getBaseTime().getModifiedAt());
+            }
+
+            postDto.setCommentSize(comments.size());
         });
     }
 

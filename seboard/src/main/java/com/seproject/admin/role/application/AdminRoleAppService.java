@@ -34,12 +34,18 @@ public class AdminRoleAppService {
         Account account = SecurityUtils.getAccount()
                 .orElseThrow(() -> new CustomAuthenticationException(ErrorCode.NOT_LOGIN, null));
 
-        urls.forEach(url -> {
+        boolean hasAuthorization = true;
+
+        for(String url : urls){
             DashBoardMenu dashBoardMenu = dashBoardService.findDashBoardMenuByUrl(url);
             if(!dashBoardMenu.authorize(account.getRoles())){
-                throw new CustomAccessDeniedException(ErrorCode.ACCESS_DENIED, null);
+                hasAuthorization = false;
             }
-        });
+        }
+
+        if(!hasAuthorization){
+            throw new CustomAccessDeniedException(ErrorCode.ACCESS_DENIED, null);
+        }
     }
 
     public List<RoleResponse> findAll(){

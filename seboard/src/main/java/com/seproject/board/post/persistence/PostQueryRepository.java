@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.fasterxml.jackson.databind.PropertyName.construct;
 import static com.querydsl.core.types.Projections.constructor;
 import static com.seproject.board.menu.domain.QCategory.category;
 import static com.seproject.board.post.domain.model.QPost.post;
@@ -36,13 +35,20 @@ public class PostQueryRepository {
                 .leftJoin(post.category, category)
                 .leftJoin(post.category.superMenu)
                 .leftJoin(post.author, boardUser)
-                .where(post.postId.eq(id))
+                .where(
+                        postIdEq(id),
+                        normalStatusEq()
+                )
                 .fetchOne();
 
         if(findPost!=null){
             Set<FileMetaData> attachments = findPost.getAttachments();
         }
         return Optional.ofNullable(findPost);
+    }
+
+    private static BooleanExpression postIdEq(Long id) {
+        return post.postId.eq(id);
     }
 
 
